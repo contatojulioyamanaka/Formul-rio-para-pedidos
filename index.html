@@ -35,12 +35,12 @@
                     placeholder="Digite seu nome completo">
             </div>
 
-            <!-- 2. Telefone -->
+            <!-- 2. Telefone com Máscara Automática -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">2. Número de Telefone (WhatsApp):</label>
-                <input type="tel" id="telefone" required 
+                <input type="tel" id="telefone" required maxlength="15"
                     class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                    placeholder="(00) 00000-0000">
+                    placeholder="(15) 99999-9999">
             </div>
 
             <!-- 3. Tamanho do Botton -->
@@ -54,7 +54,7 @@
                 </select>
             </div>
 
-            <!-- 4. Quantidade e Tabela de Precificação -->
+            <!-- 4. Quantidade e Tabela de Precificação com Barra de Frete Grátis -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">4. Quantidade de Unidades:</label>
                 <input type="number" id="quantidade" min="1" value="1" required 
@@ -94,9 +94,9 @@
                         <span>R$ 3,20 /un</span>
                     </div>
 
-                    <!-- Informação de Frete Grátis logo após a tabela -->
-                    <div class="pt-2 border-t border-indigo-200 mt-2 space-y-0.5">
-                        <p class="text-emerald-700 font-bold">✨ Pedidos acima de R$ 70,00 ganham FRETE GRÁTIS!</p>
+                    <!-- Indicador Interativo de Frete Grátis -->
+                    <div class="pt-2 border-t border-indigo-200 mt-2 space-y-1">
+                        <p id="statusFreteGratis" class="font-bold text-emerald-700">✨ Adicione mais R$ 66,00 em produtos para ganhar FRETE GRÁTIS!</p>
                     </div>
 
                     <div id="freteInfoContainer" class="hidden text-amber-800 pt-1 border-t border-indigo-200 space-y-0.5">
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <!-- 5. Forma de Pagamento -->
+            <!-- 5. Forma de Pagamento com Orientação Pix -->
             <div class="space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">5. Forma de Pagamento:</label>
                 <div class="flex space-x-6">
@@ -120,6 +120,9 @@
                         <span class="text-sm font-medium text-slate-700">Dinheiro</span>
                     </label>
                 </div>
+
+                <!-- Aviso amigável para pagamento via Pix -->
+                <p class="text-[11px] text-slate-500 italic">💡 Se escolher Pix, a chave e os dados para pagamento serão enviados por nós no seu WhatsApp após o pedido.</p>
 
                 <!-- Pergunta condicional de troco via Pix (aparece só se escolher Dinheiro) -->
                 <div id="trocoContainer" class="hidden pt-3 border-t border-slate-200 space-y-2">
@@ -148,25 +151,39 @@
                 </div>
             </div>
 
-            <!-- 7. Endereço de Entrega (Condicional) -->
-            <div id="enderecoContainer" class="space-y-4">
+            <!-- 7. Endereço de Entrega Detalhado (Condicional) -->
+            <div id="enderecoContainer" class="space-y-3">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">7. Endereço Completo de Entrega:</label>
-                    <textarea id="endereco" rows="3" 
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">7. Rua e Número:</label>
+                    <input type="text" id="ruaNumero" 
                         class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        placeholder="Rua, Número, Bairro e Ponto de Referência"></textarea>
+                        placeholder="Ex: Rua das Flores, 123">
                 </div>
 
-                <!-- Observação ou Complemento -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Bairro:</label>
+                        <input type="text" id="bairro" 
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm"
+                            placeholder="Ex: Centro">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Apto / Bloco (Opcional):</label>
+                        <input type="text" id="complemento" 
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm"
+                            placeholder="Ex: Apto 42B">
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Observação ou Complemento de Entrega (Opcional):</label>
-                    <input type="text" id="observacao" 
-                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                        placeholder="Ex: Apartamento 42, Bloco B, portão preto...">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Ponto de Referência:</label>
+                    <input type="text" id="referencia" 
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm"
+                        placeholder="Ex: Próximo à praça, casa com portão branco">
                 </div>
 
                 <!-- Entregar para o vizinho -->
-                <div class="flex items-start space-x-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <div class="flex items-start space-x-3 bg-slate-50 p-3 rounded-lg border border-slate-200 mt-2">
                     <input type="checkbox" id="entregaVizinho" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 mt-0.5">
                     <label for="entregaVizinho" class="text-sm font-medium text-slate-700 cursor-pointer">
                         Caso eu não esteja em casa, autorizo a entrega para um vizinho.
@@ -194,11 +211,11 @@
             <div id="containerFotoArte">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">9. Foto / Arte para o Botton:</label>
                 <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg text-xs text-blue-900 space-y-1 mb-2">
-                    <p>💡 <strong>Dica de Qualidade:</strong> Quanto melhor for a imagem da arte, melhor será a qualidade no botton. O ideal é enviar imagens acima de **1000x1000 pixels**.</p>
+                    <p>💡 <strong>Dica de Qualidade:</strong> Quanto melhor for a imagem da arte, melhor será a qualidade no botton. O ideal é enviar imagens acima de <strong>1000x1000 pixels</strong>.</p>
+                    <p>🎯 <em>Dica: Centralize bem o rosto ou o detalhe principal dentro do círculo ao recortar.</em></p>
                 </div>
-                <p class="text-xs text-slate-500 mb-2">Envie a imagem e ajuste o círculo para o recorte perfeito:</p>
                 
-                <input type="file" id="uploadImage" accept="image/*" required
+                <input type="file" id="uploadImage" accept="image/png, image/jpeg, image/jpg, image/webp" required
                     class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
             </div>
 
@@ -233,12 +250,32 @@
     <script>
         const WHATSAPP_NUMERO_LOJA = "5515997259823";
 
+        // Máscara automática para o telefone
+        const telefoneInput = document.getElementById('telefone');
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 7) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+            } else if (value.length > 2) {
+                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            } else if (value.length > 0) {
+                value = `(${value}`;
+            }
+            e.target.value = value;
+        });
+
         const retiradaCheckbox = document.getElementById('retiradaLoja');
         const enderecoContainer = document.getElementById('enderecoContainer');
         const freteInfoContainer = document.getElementById('freteInfoContainer');
         const freteTextoValor = document.getElementById('freteTextoValor');
-        const enderecoInput = document.getElementById('endereco');
-        const observacaoInput = document.getElementById('observacao');
+        const statusFreteGratis = document.getElementById('statusFreteGratis');
+        
+        const ruaNumeroInput = document.getElementById('ruaNumero');
+        const bairroInput = document.getElementById('bairro');
+        const complementoInput = document.getElementById('complemento');
+        const referenciaInput = document.getElementById('referencia');
         const entregaVizinhoCheckbox = document.getElementById('entregaVizinho');
         
         const tamanhoSelect = document.getElementById('tamanho');
@@ -286,18 +323,18 @@
                 if (qtd >= 50) return 1.95;
                 if (qtd >= 30) return 2.50;
                 if (qtd >= 10) return 3.10;
-                return 4.00; // 1 a 9
+                return 4.00;
             } else if (tamanho === '58mm') {
                 if (qtd >= 100) return 3.20;
                 if (qtd >= 50) return 3.90;
                 if (qtd >= 30) return 5.00;
                 if (qtd >= 10) return 6.20;
-                return 8.00; // 1 a 9
+                return 8.00;
             }
             return 0;
         }
 
-        // Função para calcular o preço estimado em tempo real com tabela progressiva
+        // Função para calcular o preço estimado em tempo real com barra de progresso do frete grátis
         function atualizarPreco() {
             const tamanho = tamanhoSelect.value;
             const qtd = parseInt(quantidadeInput.value) || 1;
@@ -305,6 +342,16 @@
 
             let subtotal = precoUnitario * qtd;
             let frete = 0;
+
+            // Atualizar barra de progresso de frete grátis
+            if (subtotal > 70.00) {
+                statusFreteGratis.innerHTML = `✨ PARABÉNS! Você ganhou <strong>FRETE GRÁTIS</strong>!`;
+                statusFreteGratis.className = "font-bold text-emerald-700";
+            } else {
+                let falta = (70.01 - subtotal).toFixed(2).replace('.', ',');
+                statusFreteGratis.innerHTML = `✨ Adicione mais R$ ${falta} em produtos para ganhar FRETE GRÁTIS!`;
+                statusFreteGratis.className = "font-bold text-amber-700";
+            }
 
             if (!retiradaCheckbox.checked) {
                 if (subtotal > 70.00) {
@@ -314,7 +361,7 @@
                 } else {
                     frete = 10.00;
                     freteInfoContainer.classList.remove('hidden');
-                    freteTextoValor.innerHTML = `• **Taxa de Entrega:** R$ 10,00 (Faltam R$ ${(70.01 - subtotal).toFixed(2).replace('.', ',')} para frete grátis)`;
+                    freteTextoValor.innerHTML = `• **Taxa de Entrega:** R$ 10,00`;
                 }
             } else {
                 freteInfoContainer.classList.add('hidden');
@@ -358,13 +405,18 @@
         retiradaCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 enderecoContainer.style.display = 'none';
-                enderecoInput.required = false;
-                enderecoInput.value = '';
+                ruaNumeroInput.required = false;
+                bairroInput.required = false;
+                ruaNumeroInput.value = '';
+                bairroInput.value = '';
+                complementoInput.value = '';
+                referenciaInput.value = '';
                 observacaoInput.value = '';
                 entregaVizinhoCheckbox.checked = false;
             } else {
                 enderecoContainer.style.display = 'block';
-                enderecoInput.required = true;
+                ruaNumeroInput.required = true;
+                bairroInput.required = true;
             }
             atualizarPreco();
         });
@@ -431,7 +483,7 @@
             e.preventDefault();
 
             const nome = document.getElementById('nome').value;
-            const telefone = document.getElementById('telefone').value;
+            const telefone = telefoneInput.value;
             const tamanho = tamanhoSelect.value;
             const quantidade = parseInt(quantidadeInput.value);
             
@@ -439,7 +491,9 @@
             radiosPagamento.forEach(r => { if (r.checked) formaPagamento = r.value; });
 
             let pagamentoTexto = formaPagamento;
-            if (formaPagamento === 'Dinheiro') {
+            if (formaPagamento === 'Pix') {
+                pagamentoTexto += " (Chave Pix será enviada no WhatsApp)";
+            } else if (formaPagamento === 'Dinheiro') {
                 const troco = trocoValorInput.value.trim();
                 const aceitaPix = aceitaTrocoPixCheckbox.checked ? "Sim" : "Não";
                 pagamentoTexto += troco ? ` (Precisa de troco para: ${troco})` : " (Sem troco informado)";
@@ -447,8 +501,10 @@
             }
 
             const isRetirada = retiradaCheckbox.checked;
-            const endereco = enderecoInput.value;
-            const observacao = observacaoInput.value.trim();
+            const ruaNum = ruaNumeroInput.value.trim();
+            const bairro = bairroInput.value.trim();
+            const complemento = complementoInput.value.trim();
+            const referencia = referenciaInput.value.trim();
             const autorizaVizinho = entregaVizinhoCheckbox.checked;
             const escolheuDepois = escolherArteDepoisCheckbox.checked;
 
@@ -471,9 +527,10 @@
             if (isRetirada) {
                 entregaTexto = "Retirar na Loja (Rua Clovis Mendes Garcia, Centro, 31)";
             } else {
-                let obsTexto = observacao ? `\n*Obs/Complemento:* ${observacao}` : "";
+                let compTexto = complemento ? `, ${complemento}` : "";
+                let refTexto = referencia ? `\n*Referência:* ${referencia}` : "";
                 let vizinhoTexto = autorizaVizinho ? "\n*Autoriza entrega ao vizinho:* Sim" : "\n*Autoriza entrega ao vizinho:* Não";
-                entregaTexto = `Endereço de Entrega: ${endereco}${obsTexto}${vizinhoTexto}`;
+                entregaTexto = `Endereço: ${ruaNum}${compTexto} - Bairro: ${bairro}${refTexto}${vizinhoTexto}`;
             }
 
             let freteTextoMensagem = isRetirada ? 
