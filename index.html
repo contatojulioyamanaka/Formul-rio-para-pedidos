@@ -94,10 +94,15 @@
                         <span>R$ 3,20 /un</span>
                     </div>
 
-                    <div id="freteInfoContainer" class="hidden text-amber-800 pt-2 border-t border-indigo-200 space-y-0.5 mt-2">
-                        <p id="freteTextoValor">• **Taxa de Entrega:** R$ 10,00</p>
-                        <p class="text-emerald-700 font-semibold">✨ Pedidos acima de R$ 70,00 ganham FRETE GRÁTIS!</p>
+                    <!-- Informação de Frete Grátis logo após a tabela -->
+                    <div class="pt-2 border-t border-indigo-200 mt-2 space-y-0.5">
+                        <p class="text-emerald-700 font-bold">✨ Pedidos acima de R$ 70,00 ganham FRETE GRÁTIS!</p>
                     </div>
+
+                    <div id="freteInfoContainer" class="hidden text-amber-800 pt-1 border-t border-indigo-200 space-y-0.5">
+                        <p id="freteTextoValor">• **Taxa de Entrega:** R$ 10,00</p>
+                    </div>
+
                     <p id="valorTotalPrev" class="font-bold text-indigo-700 pt-2 border-t border-indigo-200 mt-2 text-sm">Total estimado: R$ 4,00</p>
                 </div>
             </div>
@@ -145,10 +150,6 @@
 
             <!-- 7. Endereço de Entrega (Condicional) -->
             <div id="enderecoContainer" class="space-y-4">
-                <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-xs text-amber-900 font-medium space-y-1">
-                    <p>📦 Taxa de frete fixa de <strong>R$ 10,00</strong> para Itapeva-SP.</p>
-                    <p class="text-emerald-700 font-bold">✨ Atenção: Pedidos acima de R$ 70,00 têm FRETE GRÁTIS!</p>
-                </div>
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1">7. Endereço Completo de Entrega:</label>
                     <textarea id="endereco" rows="3" 
@@ -181,8 +182,16 @@
                 </label>
             </div>
 
+            <!-- Checkbox para escolher a arte depois -->
+            <div class="flex items-start space-x-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <input type="checkbox" id="escolherArteDepois" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 mt-0.5">
+                <label for="escolherArteDepois" class="text-sm font-medium text-slate-700 cursor-pointer">
+                    Desejo escolher/enviar a arte depois pelo WhatsApp.
+                </label>
+            </div>
+
             <!-- 9. Envio e Recorte da Foto -->
-            <div>
+            <div id="containerFotoArte">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">9. Foto / Arte para o Botton:</label>
                 <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg text-xs text-blue-900 space-y-1 mb-2">
                     <p>💡 <strong>Dica de Qualidade:</strong> Quanto melhor for a imagem da arte, melhor será a qualidade no botton. O ideal é enviar imagens acima de **1000x1000 pixels**.</p>
@@ -241,6 +250,8 @@
         const trocoValorInput = document.getElementById('trocoValor');
         const aceitaTrocoPixCheckbox = document.getElementById('aceitaTrocoPix');
 
+        const escolherArteDepoisCheckbox = document.getElementById('escolherArteDepois');
+        const containerFotoArte = document.getElementById('containerFotoArte');
         const uploadImage = document.getElementById('uploadImage');
         const imageToCrop = document.getElementById('imageToCrop');
         const cropAreaContainer = document.getElementById('cropAreaContainer');
@@ -251,6 +262,22 @@
         let cropper = null;
         let croppedBlobUrl = null;
         let croppedFileBlob = null;
+
+        // Controlar se vai enviar a arte depois
+        escolherArteDepoisCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                containerFotoArte.style.display = 'none';
+                cropAreaContainer.classList.add('hidden');
+                previewContainer.classList.add('hidden');
+                uploadImage.required = false;
+                uploadImage.value = '';
+                croppedFileBlob = "DEPOIS";
+            } else {
+                containerFotoArte.style.display = 'block';
+                uploadImage.required = true;
+                croppedFileBlob = null;
+            }
+        });
 
         // Função para obter o preço unitário com base na tabela progressiva
         function getPrecoUnitario(tamanho, qtd) {
@@ -282,11 +309,15 @@
             if (!retiradaCheckbox.checked) {
                 if (subtotal > 70.00) {
                     frete = 0;
+                    freteInfoContainer.classList.remove('hidden');
                     freteTextoValor.innerHTML = `• <s>Taxa de Entrega: R$ 10,00</s> <span class="text-emerald-600 font-bold">FRETE GRÁTIS!</span>`;
                 } else {
                     frete = 10.00;
+                    freteInfoContainer.classList.remove('hidden');
                     freteTextoValor.innerHTML = `• **Taxa de Entrega:** R$ 10,00 (Faltam R$ ${(70.01 - subtotal).toFixed(2).replace('.', ',')} para frete grátis)`;
                 }
+            } else {
+                freteInfoContainer.classList.add('hidden');
             }
 
             let total = subtotal + frete;
@@ -327,14 +358,12 @@
         retiradaCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 enderecoContainer.style.display = 'none';
-                freteInfoContainer.classList.add('hidden');
                 enderecoInput.required = false;
                 enderecoInput.value = '';
                 observacaoInput.value = '';
                 entregaVizinhoCheckbox.checked = false;
             } else {
                 enderecoContainer.style.display = 'block';
-                freteInfoContainer.classList.remove('hidden');
                 enderecoInput.required = true;
             }
             atualizarPreco();
@@ -421,9 +450,10 @@
             const endereco = enderecoInput.value;
             const observacao = observacaoInput.value.trim();
             const autorizaVizinho = entregaVizinhoCheckbox.checked;
+            const escolheuDepois = escolherArteDepoisCheckbox.checked;
 
-            if (!croppedFileBlob) {
-                alert('Por favor, envie e confirme o recorte da foto para o botton!');
+            if (!escolheuDepois && !croppedFileBlob) {
+                alert('Por favor, envie e confirme o recorte da foto para o botton ou marque a opção de enviar a arte depois!');
                 return;
             }
 
@@ -450,6 +480,10 @@
                 "R$ 0,00 (Retirada na loja)" : 
                 (frete === 0 ? "R$ 0,00 (FRETE GRÁTIS - Acima de R$ 70,00)" : `R$ ${freteFormatado}`);
 
+            let arteMensagem = escolheuDepois ? 
+                "_(Cliente informou que enviará a arte depois pelo WhatsApp)_" : 
+                "_(A foto recortada foi gerada e baixada no meu celular, vou enviá-la na sequência!)_";
+
             let textoMensagem = `*Novo Pedido de Botton!* 🔘\n\n` +
                                 `*Nome:* ${nome}\n` +
                                 `*Telefone:* ${telefone}\n` +
@@ -461,7 +495,7 @@
                                 `*Pagamento:* ${pagamentoTexto}\n` +
                                 `*Modalidade:* ${entregaTexto}\n\n` +
                                 `_*(Cliente ciente de que a entrega é exclusiva em Itapeva - SP)*_\n\n` +
-                                `_(A foto recortada foi gerada e baixada no meu celular, vou enviá-la na sequência!)_`;
+                                `${arteMensagem}`;
 
             const urlWhatsApp = `https://wa.me/${WHATSAPP_NUMERO_LOJA}?text=${encodeURIComponent(textoMensagem)}`;
 
