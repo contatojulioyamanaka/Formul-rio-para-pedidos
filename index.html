@@ -13,6 +13,20 @@
         .cropper-view-box, .cropper-face {
             border-radius: 50%;
         }
+        /* Estilização customizada para o botão de upload */
+        input[type="file"]::file-selector-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: #4338ca;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen py-8 px-4">
@@ -43,23 +57,36 @@
                     placeholder="(15) 99999-9999">
             </div>
 
-            <!-- 3. Tamanho do Botton -->
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">3. Tamanho do Botton:</label>
-                <select id="tamanho" required 
-                    class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
-                    <option value="" disabled selected>Selecione o tamanho</option>
-                    <option value="37mm">37mm (Pequeno)</option>
-                    <option value="58mm">58mm (Grande)</option>
-                </select>
-            </div>
-
-            <!-- 4. Quantidade e Tabela de Precificação com Barra de Frete Grátis -->
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">4. Quantidade de Unidades:</label>
-                <input type="number" id="quantidade" min="1" value="1" required 
-                    class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none mb-2">
+            <!-- 3 e 4. Escolha de Quantidades por Tamanho e Tabela de Preços Progressiva -->
+            <div class="space-y-4">
+                <label class="block text-sm font-semibold text-slate-700">3. Escolha a Quantidade por Tamanho:</label>
                 
+                <!-- Controle 37mm -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Botton 37mm (Pequeno)</p>
+                        <p class="text-[11px] text-slate-500">Progressivo de R$ 4,00 a R$ 1,60/un</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button type="button" onclick="alterarQtd('37mm', -1)" class="w-8 h-8 bg-indigo-100 text-indigo-700 font-bold rounded-lg hover:bg-indigo-200 transition">-</button>
+                        <span id="qtd37" class="w-8 text-center font-bold text-slate-800">0</span>
+                        <button type="button" onclick="alterarQtd('37mm', 1)" class="w-8 h-8 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition">+</button>
+                    </div>
+                </div>
+
+                <!-- Controle 58mm -->
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Botton 58mm (Grande)</p>
+                        <p class="text-[11px] text-slate-500">Progressivo de R$ 8,00 a R$ 3,20/un</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button type="button" onclick="alterarQtd('58mm', -1)" class="w-8 h-8 bg-indigo-100 text-indigo-700 font-bold rounded-lg hover:bg-indigo-200 transition">-</button>
+                        <span id="qtd58" class="w-8 text-center font-bold text-slate-800">0</span>
+                        <button type="button" onclick="alterarQtd('58mm', 1)" class="w-8 h-8 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition">+</button>
+                    </div>
+                </div>
+
                 <!-- Tabela de Preços Progressiva Informativa -->
                 <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-lg text-xs text-indigo-900 space-y-1">
                     <p class="font-semibold text-indigo-950 mb-1">📋 Tabela de Preços Progressiva:</p>
@@ -95,19 +122,21 @@
                     </div>
 
                     <!-- Indicador Interativo de Frete Grátis -->
-                    <div class="pt-2 border-t border-indigo-200 mt-2 space-y-1">
-                        <p id="statusFreteGratis" class="font-bold text-emerald-700">✨ Adicione mais R$ 66,00 em produtos para ganhar FRETE GRÁTIS!</p>
+                    <div id="containerStatusFrete" class="pt-2 border-t border-indigo-200 mt-2 space-y-1 hidden">
+                        <p id="statusFreteGratis" class="font-bold text-emerald-700"></p>
                     </div>
 
                     <div id="freteInfoContainer" class="hidden text-amber-800 pt-1 border-t border-indigo-200 space-y-0.5">
                         <p id="freteTextoValor">• **Taxa de Entrega:** R$ 10,00</p>
                     </div>
 
-                    <p id="valorTotalPrev" class="font-bold text-indigo-700 pt-2 border-t border-indigo-200 mt-2 text-sm">Total estimado: R$ 4,00</p>
+                    <p id="valorTotalPrev" class="font-bold text-indigo-700 pt-2 border-t border-indigo-200 mt-2 text-sm">
+                        👉 Adicione bottons usando os botões acima para ver o total estimado.
+                    </p>
                 </div>
             </div>
 
-            <!-- 5. Forma de Pagamento com Orientação Pix -->
+            <!-- 5. Forma de Pagamento -->
             <div class="space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">5. Forma de Pagamento:</label>
                 <div class="flex space-x-6">
@@ -121,8 +150,7 @@
                     </label>
                 </div>
 
-                <!-- Aviso amigável para pagamento via Pix -->
-                <p class="text-[11px] text-slate-500 italic">💡 Se escolher Pix, a chave e os dados para pagamento serão enviados por nós no seu WhatsApp após o pedido.</p>
+                <p class="text-[11px] text-slate-500 italic">💡 Se escolher pagamento via Pix, a chave e os dados serão enviados via WhatsApp, após a conclusão do pedido.</p>
 
                 <!-- Pergunta condicional de troco via Pix (aparece só se escolher Dinheiro) -->
                 <div id="trocoContainer" class="hidden pt-3 border-t border-slate-200 space-y-2">
@@ -140,12 +168,12 @@
                 </div>
             </div>
 
-            <!-- 6. Retirada na Loja ou Entrega -->
+            <!-- 6. Retirada no Endereço do Vendedor ou Entrega -->
             <div class="space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
                 <div class="flex items-start space-x-3">
                     <input type="checkbox" id="retiradaLoja" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 mt-0.5">
                     <label for="retiradaLoja" class="text-sm font-medium text-slate-700 cursor-pointer">
-                        Retirar o pedido no endereço da loja<br>
+                        Retirar o pedido no endereço do vendedor<br>
                         <span class="text-xs text-slate-500 font-normal">Rua Clovis Mendes Garcia, Centro, 31</span>
                     </label>
                 </div>
@@ -195,28 +223,20 @@
             <div class="flex items-start space-x-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
                 <input type="checkbox" id="cienciaItapeva" required class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500 mt-0.5">
                 <label for="cienciaItapeva" class="text-xs font-medium text-amber-900 cursor-pointer">
-                    Estou ciente de que a loja realiza atendimento e vendas exclusivamente na cidade de <strong>Itapeva - SP</strong>.
+                    Estou ciente de que o comércio realiza atendimento e vendas exclusivamente na cidade de <strong>Itapeva - SP</strong>.
                 </label>
             </div>
 
-            <!-- Checkbox para escolher a arte depois -->
-            <div class="flex items-start space-x-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <input type="checkbox" id="escolherArteDepois" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 mt-0.5">
-                <label for="escolherArteDepois" class="text-sm font-medium text-slate-700 cursor-pointer">
-                    Desejo escolher/enviar a arte depois pelo WhatsApp.
-                </label>
-            </div>
-
-            <!-- 9. Envio e Recorte da Foto -->
-            <div id="containerFotoArte">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">9. Foto / Arte para o Botton:</label>
-                <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg text-xs text-blue-900 space-y-1 mb-2">
-                    <p>💡 <strong>Dica de Qualidade:</strong> Quanto melhor for a imagem da arte, melhor será a qualidade no botton. O ideal é enviar imagens acima de <strong>1000x1000 pixels</strong>.</p>
-                    <p>🎯 <em>Dica: Centralize bem o rosto ou o detalhe principal dentro do círculo ao recortar.</em></p>
+            <!-- 9. Envio e Simulação da Arte no Botton (Opcional) -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">9. Simulação da Arte no Botton (Opcional):</label>
+                <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-lg text-xs text-indigo-950 space-y-1.5 mb-2">
+                    <p>🎨 <strong>Quer ver como sua arte vai ficar?</strong> Este recurso abaixo é apenas um simulador visual para você testar e ajustar o corte da sua imagem dentro do formato redondo de um botton!</p>
+                    <p>💡 <em>Dica de Qualidade:</em> O ideal é enviar imagens acima de <strong>1000x1000 pixels</strong>.</p>
                 </div>
                 
-                <input type="file" id="uploadImage" accept="image/png, image/jpeg, image/jpg, image/webp" required
-                    class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                <input type="file" id="uploadImage" accept="image/png, image/jpeg, image/jpg, image/webp"
+                    class="w-full text-sm text-slate-500 cursor-pointer">
             </div>
 
             <!-- Área de Ajuste/Crop (Oculta até carregar a imagem) -->
@@ -232,9 +252,9 @@
 
             <!-- Pré-visualização da imagem recortada -->
             <div id="previewContainer" class="hidden text-center space-y-2">
-                <p class="text-xs font-medium text-slate-600">Arte pronta:</p>
+                <p class="text-xs font-medium text-slate-600">Simulação da Arte Pronta:</p>
                 <img id="croppedResult" class="w-24 h-24 object-cover rounded-full mx-auto border-2 border-indigo-500 shadow-md">
-                <p class="text-xs text-emerald-600 font-medium">✓ Imagem recortada com sucesso!</p>
+                <p class="text-xs text-emerald-600 font-medium">✓ Visualização gerada com sucesso!</p>
             </div>
 
             <!-- Botão de Envio -->
@@ -249,6 +269,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
         const WHATSAPP_NUMERO_LOJA = "5515997259823";
+
+        // Quantidades globais
+        let qtd37 = 0;
+        let qtd58 = 0;
+
+        // Função de alterar quantidade pelos botões + / -
+        function alterarQtd(tamanho, delta) {
+            if (tamanho === '37mm') {
+                qtd37 = Math.max(0, qtd37 + delta);
+                document.getElementById('qtd37').textContent = qtd37;
+            } else if (tamanho === '58mm') {
+                qtd58 = Math.max(0, qtd58 + delta);
+                document.getElementById('qtd58').textContent = qtd58;
+            }
+            atualizarPreco();
+        }
 
         // Máscara automática para o telefone
         const telefoneInput = document.getElementById('telefone');
@@ -270,6 +306,7 @@
         const enderecoContainer = document.getElementById('enderecoContainer');
         const freteInfoContainer = document.getElementById('freteInfoContainer');
         const freteTextoValor = document.getElementById('freteTextoValor');
+        const containerStatusFrete = document.getElementById('containerStatusFrete');
         const statusFreteGratis = document.getElementById('statusFreteGratis');
         
         const ruaNumeroInput = document.getElementById('ruaNumero');
@@ -278,8 +315,6 @@
         const referenciaInput = document.getElementById('referencia');
         const entregaVizinhoCheckbox = document.getElementById('entregaVizinho');
         
-        const tamanhoSelect = document.getElementById('tamanho');
-        const quantidadeInput = document.getElementById('quantidade');
         const valorTotalPrev = document.getElementById('valorTotalPrev');
 
         const radiosPagamento = document.getElementsByName('pagamento');
@@ -287,8 +322,6 @@
         const trocoValorInput = document.getElementById('trocoValor');
         const aceitaTrocoPixCheckbox = document.getElementById('aceitaTrocoPix');
 
-        const escolherArteDepoisCheckbox = document.getElementById('escolherArteDepois');
-        const containerFotoArte = document.getElementById('containerFotoArte');
         const uploadImage = document.getElementById('uploadImage');
         const imageToCrop = document.getElementById('imageToCrop');
         const cropAreaContainer = document.getElementById('cropAreaContainer');
@@ -300,50 +333,45 @@
         let croppedBlobUrl = null;
         let croppedFileBlob = null;
 
-        // Controlar se vai enviar a arte depois
-        escolherArteDepoisCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                containerFotoArte.style.display = 'none';
-                cropAreaContainer.classList.add('hidden');
-                previewContainer.classList.add('hidden');
-                uploadImage.required = false;
-                uploadImage.value = '';
-                croppedFileBlob = "DEPOIS";
-            } else {
-                containerFotoArte.style.display = 'block';
-                uploadImage.required = true;
-                croppedFileBlob = null;
-            }
-        });
-
-        // Função para obter o preço unitário com base na tabela progressiva
-        function getPrecoUnitario(tamanho, qtd) {
-            if (tamanho === '37mm') {
-                if (qtd >= 100) return 1.60;
-                if (qtd >= 50) return 1.95;
-                if (qtd >= 30) return 2.50;
-                if (qtd >= 10) return 3.10;
-                return 4.00;
-            } else if (tamanho === '58mm') {
-                if (qtd >= 100) return 3.20;
-                if (qtd >= 50) return 3.90;
-                if (qtd >= 30) return 5.00;
-                if (qtd >= 10) return 6.20;
-                return 8.00;
-            }
-            return 0;
+        // Preço unitário progressivo para 37mm
+        function getPreco37(qtd) {
+            if (qtd >= 100) return 1.60;
+            if (qtd >= 50) return 1.95;
+            if (qtd >= 30) return 2.50;
+            if (qtd >= 10) return 3.10;
+            return 4.00;
         }
 
-        // Função para calcular o preço estimado em tempo real com barra de progresso do frete grátis
-        function atualizarPreco() {
-            const tamanho = tamanhoSelect.value;
-            const qtd = parseInt(quantidadeInput.value) || 1;
-            const precoUnitario = getPrecoUnitario(tamanho, qtd);
+        // Preço unitário progressivo para 58mm
+        function getPreco58(qtd) {
+            if (qtd >= 100) return 3.20;
+            if (qtd >= 50) return 3.90;
+            if (qtd >= 30) return 5.00;
+            if (qtd >= 10) return 6.20;
+            return 8.00;
+        }
 
-            let subtotal = precoUnitario * qtd;
+        // Função para calcular o preço estimado em tempo real
+        function atualizarPreco() {
+            const totalPecas = qtd37 + qtd58;
+
+            if (totalPecas === 0) {
+                containerStatusFrete.classList.add('hidden');
+                freteInfoContainer.classList.add('hidden');
+                valorTotalPrev.textContent = "👉 Adicione bottons usando os botões acima para ver o total estimado.";
+                return;
+            }
+
+            const precoUnit37 = getPreco37(qtd37);
+            const precoUnit58 = getPrecoSocietario58 = getPreco58(qtd58);
+
+            const subtotal37 = qtd37 * precoUnit37;
+            const subtotal58 = qtd58 * precoUnit58;
+            const subtotal = subtotal37 + subtotal58;
+
             let frete = 0;
 
-            // Atualizar barra de progresso de frete grátis
+            containerStatusFrete.classList.remove('hidden');
             if (subtotal > 70.00) {
                 statusFreteGratis.innerHTML = `✨ PARABÉNS! Você ganhou <strong>FRETE GRÁTIS</strong>!`;
                 statusFreteGratis.className = "font-bold text-emerald-700";
@@ -369,7 +397,7 @@
 
             let total = subtotal + frete;
 
-            let textoTotal = `Total estimado: R$ ${total.toFixed(2).replace('.', ',')} (R$ ${subtotal.toFixed(2).replace('.', ',')} dos bottons (${qtd}x de R$ ${precoUnitario.toFixed(2).replace('.', ',')})`;
+            let textoTotal = `Total estimado: R$ ${total.toFixed(2).replace('.', ',')} (R$ ${subtotal.toFixed(2).replace('.', ',')} dos bottons`;
             if (!retiradaCheckbox.checked) {
                 if (frete === 0) {
                     textoTotal += ` + R$ 0,00 do frete grátis`;
@@ -384,8 +412,6 @@
             valorTotalPrev.textContent = textoTotal;
         }
 
-        tamanhoSelect.addEventListener('change', atualizarPreco);
-        quantidadeInput.addEventListener('input', atualizarPreco);
         retiradaCheckbox.addEventListener('change', atualizarPreco);
 
         // Controlar exibição das opções de troco baseadas na escolha de pagamento
@@ -401,7 +427,7 @@
             });
         });
 
-        // Controlar exibição do bloco de endereço e frete baseado na retirada na loja
+        // Controlar exibição do bloco de endereço e frete baseado na retirada no endereço do vendedor
         retiradaCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 enderecoContainer.style.display = 'none';
@@ -411,7 +437,6 @@
                 bairroInput.value = '';
                 complementoInput.value = '';
                 referenciaInput.value = '';
-                observacaoInput.value = '';
                 entregaVizinhoCheckbox.checked = false;
             } else {
                 enderecoContainer.style.display = 'block';
@@ -482,17 +507,20 @@
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
+            if (qtd37 === 0 && qtd58 === 0) {
+                alert('Por favor, adicione pelo menos um botton (37mm ou 58mm) antes de enviar o pedido!');
+                return;
+            }
+
             const nome = document.getElementById('nome').value;
             const telefone = telefoneInput.value;
-            const tamanho = tamanhoSelect.value;
-            const quantidade = parseInt(quantidadeInput.value);
             
             let formaPagamento = "";
             radiosPagamento.forEach(r => { if (r.checked) formaPagamento = r.value; });
 
             let pagamentoTexto = formaPagamento;
             if (formaPagamento === 'Pix') {
-                pagamentoTexto += " (Chave Pix será enviada no WhatsApp)";
+                pagamentoTexto += " (Chave e dados serão enviados via WhatsApp após a conclusão do pedido)";
             } else if (formaPagamento === 'Dinheiro') {
                 const troco = trocoValorInput.value.trim();
                 const aceitaPix = aceitaTrocoPixCheckbox.checked ? "Sim" : "Não";
@@ -506,26 +534,35 @@
             const complemento = complementoInput.value.trim();
             const referencia = referenciaInput.value.trim();
             const autorizaVizinho = entregaVizinhoCheckbox.checked;
-            const escolheuDepois = escolherArteDepoisCheckbox.checked;
 
-            if (!escolheuDepois && !croppedFileBlob) {
-                alert('Por favor, envie e confirme o recorte da foto para o botton ou marque a opção de enviar a arte depois!');
-                return;
+            // Cálculos
+            let subtotal37 = 0;
+            let subtotal58 = 0;
+            let descItens = "";
+
+            if (qtd37 > 0) {
+                let p37 = getPreco37(qtd37);
+                subtotal37 = qtd37 * p37;
+                descItens += `• ${qtd37}x Botton 37mm (R$ ${p37.toFixed(2).replace('.', ',')} cada) = R$ ${subtotal37.toFixed(2).replace('.', ',')}\n`;
             }
 
-            let precoUnitario = getPrecoUnitario(tamanho, quantidade);
-            let subtotal = precoUnitario * quantidade;
+            if (qtd58 > 0) {
+                let p58 = getPreco58(qtd58);
+                subtotal58 = qtd58 * p58;
+                descItens += `• ${qtd58}x Botton 58mm (R$ ${p58.toFixed(2).replace('.', ',')} cada) = R$ ${subtotal58.toFixed(2).replace('.', ',')}\n`;
+            }
+
+            let subtotal = subtotal37 + subtotal58;
             let frete = isRetirada ? 0 : (subtotal > 70.00 ? 0 : 10.00);
             let valorTotal = subtotal + frete;
 
             let subtotalFormatado = subtotal.toFixed(2).replace('.', ',');
             let freteFormatado = frete.toFixed(2).replace('.', ',');
             let valorTotalFormatado = valorTotal.toFixed(2).replace('.', ',');
-            let precoUnitarioFormatado = precoUnitario.toFixed(2).replace('.', ',');
 
             let entregaTexto = "";
             if (isRetirada) {
-                entregaTexto = "Retirar na Loja (Rua Clovis Mendes Garcia, Centro, 31)";
+                entregaTexto = "Retirar no endereço do vendedor (Rua Clovis Mendes Garcia, Centro, 31)";
             } else {
                 let compTexto = complemento ? `, ${complemento}` : "";
                 let refTexto = referencia ? `\n*Referência:* ${referencia}` : "";
@@ -534,24 +571,23 @@
             }
 
             let freteTextoMensagem = isRetirada ? 
-                "R$ 0,00 (Retirada na loja)" : 
+                "R$ 0,00 (Retirada com o vendedor)" : 
                 (frete === 0 ? "R$ 0,00 (FRETE GRÁTIS - Acima de R$ 70,00)" : `R$ ${freteFormatado}`);
 
-            let arteMensagem = escolheuDepois ? 
-                "_(Cliente informou que enviará a arte depois pelo WhatsApp)_" : 
-                "_(A foto recortada foi gerada e baixada no meu celular, vou enviá-la na sequência!)_";
+            let arteMensagem = croppedFileBlob ? 
+                "_(O cliente utilizou o simulador e a foto recortada foi baixada no celular dele para envio)_" : 
+                "_(O cliente não utilizou o simulador de imagem)_";
 
             let textoMensagem = `*Novo Pedido de Botton!* 🔘\n\n` +
                                 `*Nome:* ${nome}\n` +
-                                `*Telefone:* ${telefone}\n` +
-                                `*Tamanho:* ${tamanho}\n` +
-                                `*Quantidade:* ${quantidade} unidade(s) (R$ ${precoUnitarioFormatado} cada)\n\n` +
+                                `*Telefone:* ${telefone}\n\n` +
+                                `*Itens do Pedido:*\n${descItens}\n` +
                                 `*Valor dos Bottons:* R$ ${subtotalFormatado}\n` +
                                 `*Valor do Frete:* ${freteTextoMensagem}\n` +
                                 `*Valor Total:* R$ ${valorTotalFormatado} (R$ ${subtotalFormatado} dos bottons + R$ ${freteFormatado} do frete)\n\n` +
                                 `*Pagamento:* ${pagamentoTexto}\n` +
                                 `*Modalidade:* ${entregaTexto}\n\n` +
-                                `_*(Cliente ciente de que a entrega é exclusiva em Itapeva - SP)*_\n\n` +
+                                `_*(Cliente ciente de que o comércio opera exclusivamente em Itapeva - SP)*_\n\n` +
                                 `${arteMensagem}`;
 
             const urlWhatsApp = `https://wa.me/${WHATSAPP_NUMERO_LOJA}?text=${encodeURIComponent(textoMensagem)}`;
